@@ -30,8 +30,8 @@ func main() {
 func automowerHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	// Setup keys from https://developer.husqvarnagroup.cloud
 	keys := HusqvarnaKeys{
-		ClientID:     os.Getenv("HUQSVARNA_CLIENT_ID"),
-		ClientSecret: os.Getenv("HUQSVARNA_CLIENT_SECRET"),
+		ClientID:     os.Getenv("HUSQVARNA_CLIENT_ID"),
+		ClientSecret: os.Getenv("HUSQVARNA_CLIENT_SECRET"),
 	}
 
 	status, err := getMowerStatus(keys)

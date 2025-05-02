@@ -1,4 +1,4 @@
-module jeanlaurent/mcp-huqsvarna-automower
+module jeanlaurent/mcp-husqvarna-automower
 
 go 1.24.2
 

@@ -7,10 +7,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 COPY . ./
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=cache,target=/go/pkg/mod \
-    go build -o mcp-huqsvarna-automower *.go
+    go build -o mcp-husqvarna-automower *.go
 
 FROM alpine:3.21
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
-COPY --from=gobuilder /src/mcp-huqsvarna-automower /app/
-ENTRYPOINT ["/app/mcp-huqsvarna-automower"]
+COPY --from=gobuilder /src/mcp-husqvarna-automower /app/
+ENTRYPOINT ["/app/mcp-husqvarna-automower"]

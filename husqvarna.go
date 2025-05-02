@@ -124,7 +124,7 @@ type MowersResponse struct {
 	} `json:"data"`
 }
 
-func huqsvarnaAuthenticate(keys HusqvarnaKeys) (AuthResponse, error) {
+func husqvarnaAuthenticate(keys HusqvarnaKeys) (AuthResponse, error) {
 	data := url.Values{}
 	data.Set("grant_type", "client_credentials")
 	data.Set("client_id", keys.ClientID)
@@ -175,7 +175,7 @@ func Authenticate(keys HusqvarnaKeys) AuthResponse {
 		}
 
 		var err error
-		authData, err = huqsvarnaAuthenticate(keys)
+		authData, err = husqvarnaAuthenticate(keys)
 		if err != nil {
 			log.Fatal(err) // crash here for now. We can handle this more gracefully later
 		}

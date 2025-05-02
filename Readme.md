@@ -1,40 +1,39 @@
-# Huqsvarna Automower MCP Server
+# Husqvarna Automower MCP Server
 
-A Model Context Protocol (MCP) server that provides access to Huqsvarna connected automowerAPI, allowing AI assistants to query information about your automower status.
+A Model Context Protocol (MCP) server that provides access to Husqvarna connected automower API, allowing AI assistants to query information about your automower status.
 
-This is calling a remote API, you have to create credentials at https://developer.husqvarnagroup.cloud
+This calls the husqvarna remote API. You need to create credentials at https://developer.husqvarnagroup.cloud
 
 ## Features
 
-Return full status from an Huqsvarna Automowers as stated by their [API](https://developer.husqvarnagroup.cloud/apis/automower-connect-api?tab=status%20description%20and%20error%20codes)
+Returns full status from Husqvarna Automowers as specified in their [API](https://developer.husqvarnagroup.cloud/apis/automower-connect-api?tab=status%20description%20and%20error%20codes)
 
-## Prerequisite
+## Prerequisites
 
-You need a `ClientID` and `ClientSecret` as generated through the [husqvarna developer portal](https://developer.husqvarnagroup.cloud)
+You need a `ClientID` and `ClientSecret` generated through the [Husqvarna developer portal](https://developer.husqvarnagroup.cloud)
 
 1. Go to https://developer.husqvarnagroup.cloud
-2. Sign up/in
-3. Go to myapplications https://developer.husqvarnagroup.cloud/applications
-4. Click on create app, put a name, leave localhost, click on create
-5. You should retreive application Key as ClientID and Application secret as ClientSecret
+2. Sign up/sign in
+3. Go to My Applications at https://developer.husqvarnagroup.cloud/applications
+4. Click "Create App", enter a name, leave localhost, click create
+5. You will receive an Application Key (ClientID) and Application Secret (ClientSecret)
 
 ## Available Tools
 
-### Huqsvarna_Automowers_Status
+### husqvarna_automowers_status
 
-Get detailed information about all the automowers.
+Get detailed information about all automowers.
 
 **Parameters:**
 
 None
- 
 
-## Run it The easy way
+## With Docker
 
-The easiest is with `docker` just
+The easiest way is with `docker`. Make sure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then run:
 `docker build -t husqvarna-automower .`
 
-Then in claude
+Then in Claude Desktop or your favorite MCP Client
 
 ```
 {
@@ -46,14 +45,14 @@ Then in claude
         "-i",
         "--rm",
         "-e",
-        "HUQSVARNA_CLIENT_ID",
+        "HUSQVARNA_CLIENT_ID",
         "-e",
-        "HUQSVARNA_CLIENT_SECRET",
+        "HUSQVARNA_CLIENT_SECRET",
         "am"
       ],
       "env": {  
-        "HUQSVARNA_CLIENT_ID": "YourClientID",
-        "HUQSVARNA_CLIENT_SECRET": "YoutClientSecret"
+        "HUSQVARNA_CLIENT_ID": "YourClientID",
+        "HUSQVARNA_CLIENT_SECRET": "YoutClientSecret"
       }
     }
   }
@@ -61,20 +60,20 @@ Then in claude
 ```
 
 
-## Run it The hard way
+## With a golang environement, without Docker
 
-If not then you need a golang development environement and 
+If not using Docker, you will need a Go development environment then
 `go build *.go -o husqvarna-automower`
 
-Then in claude
+Then in Claude Desktop or your favorite MCP Client:
 ```
 {
   "mcpServers": {
     "automower": {
       "command": "husqvarna-automower",
       "env": {  
-        "HUQSVARNA_CLIENT_ID": "YourClientID",
-        "HUQSVARNA_CLIENT_SECRET": "YoutClientSecret"
+        "HUSQVARNA_CLIENT_ID": "YourClientID",
+        "HUSQVARNA_CLIENT_SECRET": "YoutClientSecret"
       }
     }
   }
