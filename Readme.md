@@ -63,14 +63,14 @@ Then in Claude Desktop or your favorite MCP Client
 ## With a golang environement, without Docker
 
 If not using Docker, you will need a Go development environment then
-`go build *.go -o husqvarna-automower`
+`go build *.go -o husqvarna-automower-mcp`
 
 Then in Claude Desktop or your favorite MCP Client:
 ```
 {
   "mcpServers": {
     "automower": {
-      "command": "husqvarna-automower",
+      "command": "husqvarna-automower-mcp",
       "env": {  
         "HUSQVARNA_CLIENT_ID": "YourClientID",
         "HUSQVARNA_CLIENT_SECRET": "YoutClientSecret"
