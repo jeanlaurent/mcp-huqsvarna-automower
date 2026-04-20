@@ -80,12 +80,9 @@ HUSQVARNA_CLIENT_SECRET=YourClientSecret
 docker compose up
 ```
 
-3. Open the Inspector UI at [http://localhost:6274](http://localhost:6274)
+3. Open the Inspector UI at [http://localhost:6274](http://localhost:6274) — it is pre-filled to connect to the automower service.
 
-4. In the Inspector UI:
-   - Select **Streamable HTTP** as the transport
-   - Enter the server URL: `http://localhost:8080/mcp`
-   - Click **Connect**
+4. Click **Connect** to start the session.
 
 5. Use the **Husqvarna Automowers Status** tool to query your mowers.
 
