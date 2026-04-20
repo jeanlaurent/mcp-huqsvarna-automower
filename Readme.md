@@ -20,7 +20,7 @@ You need a `ClientID` and `ClientSecret` generated through the [Husqvarna develo
 
 ## Available Tools
 
-### husqvarna_automowers_status
+### Husqvarna Automowers Status
 
 Get detailed information about all automowers.
 
@@ -58,6 +58,35 @@ Then in Claude Desktop or your favorite MCP Client
   }
 }
 ```
+
+To run with Streamable HTTP transport instead of stdio, add `-e TRANSPORT=http`, `-e PORT=8080`, and `-p 8080:8080` to the `docker run` arguments.
+
+## With Docker Compose (Streamable HTTP + MCP Inspector)
+
+This runs the automower server in HTTP mode alongside the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) for easy testing.
+
+1. Create a `.env` file with your credentials:
+
+```
+HUSQVARNA_CLIENT_ID=YourClientID
+HUSQVARNA_CLIENT_SECRET=YourClientSecret
+```
+
+> ⚠️ **Do not commit `.env`** — it contains secrets. It is already listed in `.gitignore`.
+
+2. Start both services:
+
+```bash
+docker compose up
+```
+
+3. Open the Inspector UI at [http://localhost:6274](http://localhost:6274) — it is pre-filled to connect to the automower service.
+
+   > **Note:** `DANGEROUSLY_OMIT_AUTH=true` and `ALLOWED_ORIGINS` are required for the MCP Inspector to work correctly when run inside Docker. `HOST=0.0.0.0` binds to all interfaces (needed for Docker port mapping), but causes the Inspector's proxy token URL to use `0.0.0.0` instead of `localhost`. Disabling auth avoids this mismatch. Always open the Inspector at `http://localhost:6274`, never `http://0.0.0.0:6274`.
+
+4. Click **Connect** to start the session.
+
+5. Use the **Husqvarna Automowers Status** tool to query your mowers.
 
 
 ## With a golang environement, without Docker

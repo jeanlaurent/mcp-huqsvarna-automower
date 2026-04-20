@@ -30,15 +30,6 @@ type AuthResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-type MowerAction struct {
-	Data struct {
-		Type       string `json:"type"`
-		Attributes struct {
-			Duration int `json:"duration"`
-		} `json:"attributes"`
-	} `json:"data"`
-}
-
 type MowersResponse struct {
 	Data []struct {
 		Type       string `json:"type"`
@@ -64,7 +55,7 @@ type MowersResponse struct {
 				InactiveReason     string `json:"inactiveReason"`
 				State              string `json:"state"`
 				ErrorCode          int    `json:"errorCode"`
-				ErrorCodeTimestamp int    `json:"errorCodeTimestamp"`
+				ErrorCodeTimestamp int64  `json:"errorCodeTimestamp"`
 			} `json:"mower"`
 			Calendar struct {
 				Tasks []struct {
@@ -143,31 +134,41 @@ func husqvarnaAuthenticate(keys HusqvarnaKeys) (AuthResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	log.Println("Auth response status: ", resp.Status)
-	if resp.StatusCode != 200 {
-		log.Println("Authentication likely failed ", resp.Status)
-	}
+	log.Println("Auth response status:", resp.Status)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return AuthResponse{}, err
 	}
 
-	var authData AuthResponse
-	err = json.Unmarshal(body, &authData)
-	if err != nil {
-		log.Fatal(err)
+	// Bug 1 fix: return a real error on non-200 instead of silently
+	// unmarshalling an error body into an empty AuthResponse.
+	if resp.StatusCode != 200 {
+		return AuthResponse{}, fmt.Errorf("auth failed: HTTP %d: %s", resp.StatusCode, body)
 	}
 
-	return authData, nil
+	var authResp AuthResponse
+	if err := json.Unmarshal(body, &authResp); err != nil {
+		return AuthResponse{}, fmt.Errorf("auth response parse error: %w", err)
+	}
+
+	return authResp, nil
 }
 
-func Authenticate(keys HusqvarnaKeys) AuthResponse {
+// Authenticate returns a valid AuthResponse, refreshing the token when
+// it is absent or about to expire. Returns an error instead of crashing
+// so that HTTP server mode survives transient failures (Bug 4 fix).
+func Authenticate(keys HusqvarnaKeys) (AuthResponse, error) {
 	authDataMutex.Lock()
 	defer authDataMutex.Unlock()
 
-	// if authData is empty or if the token has expired, re-authenticate
-	if authData.AccessToken == "" || time.Since(lastAuthTime).Seconds() > float64(authData.ExpiresIn-300) {
+	// Bug 3 fix: guard against negative threshold when ExpiresIn < 300.
+	threshold := authData.ExpiresIn - 300
+	if threshold < 0 {
+		threshold = 0
+	}
+
+	if authData.AccessToken == "" || time.Since(lastAuthTime).Seconds() > float64(threshold) {
 		if authData.AccessToken == "" {
 			log.Println("Authenticating...")
 		} else {
@@ -177,53 +178,54 @@ func Authenticate(keys HusqvarnaKeys) AuthResponse {
 		var err error
 		authData, err = husqvarnaAuthenticate(keys)
 		if err != nil {
-			log.Fatal(err) // crash here for now. We can handle this more gracefully later
+			return AuthResponse{}, err
 		}
 		lastAuthTime = time.Now()
-
 	} else {
-		log.Println("Reusing token, last Authenticated at", time.Since(lastAuthTime).Seconds(), " expire in ", authData.ExpiresIn-300, "seconds")
+		log.Println("Reusing token, last authenticated", time.Since(lastAuthTime).Seconds(), "s ago, expires in", threshold, "s")
 	}
 
-	return authData
-
+	return authData, nil
 }
 
 func getMowerStatus(husqsKeys HusqvarnaKeys) (MowersResponse, error) {
-	authData := Authenticate(husqsKeys)
+	// Bug 4 fix: propagate auth errors instead of crashing.
+	auth, err := Authenticate(husqsKeys)
+	if err != nil {
+		return MowersResponse{}, fmt.Errorf("authentication failed: %w", err)
+	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://api.amc.husqvarna.dev/v1/mowers", nil)
 	if err != nil {
 		return MowersResponse{}, err
 	}
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", authData.AccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", auth.AccessToken))
 	req.Header.Add("X-Api-Key", husqsKeys.ClientID)
 	req.Header.Add("Authorization-Provider", "husqvarna")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println(err)
 		return MowersResponse{}, err
 	}
 	defer resp.Body.Close()
 
-	log.Println("Mower status response status: ", resp.Status)
-	if resp.StatusCode != 200 {
-		log.Println("Mower status likely failed ", resp.StatusCode)
-		log.Println("Headers", resp.Header)
-	}
+	log.Println("Mower status response status:", resp.Status)
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return MowersResponse{}, err
 	}
+
+	// Bug 2 fix: return a real error on non-200 instead of silently
+	// unmarshalling an error body into an empty MowersResponse.
 	if resp.StatusCode != 200 {
-		log.Println("Logging response body", body)
+		return MowersResponse{}, fmt.Errorf("mowers API failed: HTTP %d: %s", resp.StatusCode, body)
 	}
 
 	var mowersData MowersResponse
-	err = json.Unmarshal(body, &mowersData)
-	if err != nil {
+	if err := json.Unmarshal(body, &mowersData); err != nil {
 		return MowersResponse{}, err
 	}
 	return mowersData, nil

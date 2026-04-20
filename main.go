@@ -3,14 +3,27 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
+func envOrDefault(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
 func main() {
+	transport := flag.String("transport", envOrDefault("TRANSPORT", "stdio"), "Transport type: stdio or http")
+	port := flag.String("port", envOrDefault("PORT", "8080"), "HTTP port (only used with http transport)")
+	flag.Parse()
+
 	s := server.NewMCPServer(
 		"HusqvarnaAutomower",
 		"1.0.0",
@@ -22,8 +35,20 @@ func main() {
 
 	s.AddTool(tool, automowerHandler)
 
-	if err := server.ServeStdio(s); err != nil {
-		fmt.Printf("Server error: %v\n", err)
+	switch *transport {
+	case "http":
+		addr := fmt.Sprintf(":%s", *port)
+		httpServer := server.NewStreamableHTTPServer(s)
+		log.Printf("Streamable HTTP server listening on %s/mcp", addr)
+		if err := httpServer.Start(addr); err != nil {
+			log.Fatalf("HTTP server error: %v", err)
+		}
+	case "stdio":
+		if err := server.ServeStdio(s); err != nil {
+			log.Fatalf("Stdio server error: %v", err)
+		}
+	default:
+		log.Fatalf("Unknown transport: %s (expected 'stdio' or 'http')", *transport)
 	}
 }
 

@@ -1,0 +1,24 @@
+services:
+  automower:
+    build: .
+    environment:
+      - TRANSPORT=http
+      - PORT=8080
+      - HUSQVARNA_CLIENT_ID=${HUSQVARNA_CLIENT_ID}
+      - HUSQVARNA_CLIENT_SECRET=${HUSQVARNA_CLIENT_SECRET}
+    ports:
+      - "8080:8080"
+
+  inspector:
+    image: ghcr.io/modelcontextprotocol/inspector:0.21.2-hotfix-3
+    command: ["--", "--transport", "streamable-http", "--server-url", "http://automower:8080/mcp"]
+    depends_on:
+      - automower
+    environment:
+      - HOST=0.0.0.0
+      - MCP_AUTO_OPEN_ENABLED=false
+      - DANGEROUSLY_OMIT_AUTH=true
+      - ALLOWED_ORIGINS=http://localhost:6274
+    ports:
+      - "6274:6274"
+      - "6277:6277"

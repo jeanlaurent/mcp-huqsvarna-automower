@@ -13,4 +13,5 @@ FROM alpine:3.21
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
 COPY --from=gobuilder /src/mcp-husqvarna-automower /app/
+EXPOSE 8080
 ENTRYPOINT ["/app/mcp-husqvarna-automower"]
