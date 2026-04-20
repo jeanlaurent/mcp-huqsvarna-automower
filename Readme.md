@@ -99,6 +99,19 @@ docker run --rm \
 
 The server will be available at `http://localhost:8080/mcp`.
 
+Once the container is running, add this to your Claude Desktop `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "automower": {
+      "type": "streamable-http",
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}
+```
+
 ## With Docker Compose (Streamable HTTP + MCP Inspector)
 
 Streamable HTTP mode exposes the server as a persistent HTTP endpoint rather than a subprocess. This is suitable for multi-agent stacks, Home Assistant integrations, and any MCP client that can't launch a subprocess directly.
