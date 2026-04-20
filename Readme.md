@@ -31,7 +31,7 @@ None
 ## With Docker
 
 The easiest way is with `docker`. Make sure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running, then run:
-`docker build -t husqvarna-automower .`
+`docker build -t husqvarna-automower-mcp .`
 
 Then in Claude Desktop or your favorite MCP Client
 
@@ -48,7 +48,7 @@ Then in Claude Desktop or your favorite MCP Client
         "HUSQVARNA_CLIENT_ID",
         "-e",
         "HUSQVARNA_CLIENT_SECRET",
-        "am"
+        "husqvarna-automower-mcp"
       ],
       "env": {  
         "HUSQVARNA_CLIENT_ID": "YourClientID",
