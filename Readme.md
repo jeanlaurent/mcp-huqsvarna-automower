@@ -59,6 +59,34 @@ Then in Claude Desktop or your favorite MCP Client
 }
 ```
 
+To run with Streamable HTTP transport instead of stdio, add `-e TRANSPORT=http` and `-e PORT=8080` to the `docker run` arguments.
+
+## With Docker Compose (Streamable HTTP + MCP Inspector)
+
+This runs the automower server in HTTP mode alongside the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) for easy testing.
+
+1. Create a `.env` file with your credentials:
+
+```
+HUSQVARNA_CLIENT_ID=YourClientID
+HUSQVARNA_CLIENT_SECRET=YourClientSecret
+```
+
+2. Start both services:
+
+```bash
+docker compose up
+```
+
+3. Open the Inspector UI at [http://localhost:6274](http://localhost:6274)
+
+4. In the Inspector UI:
+   - Select **Streamable HTTP** as the transport
+   - Enter the server URL: `http://automower:8080/mcp`
+   - Click **Connect**
+
+5. Use the **Husqvarna Automowers Status** tool to query your mowers.
+
 
 ## With a golang environement, without Docker
 
