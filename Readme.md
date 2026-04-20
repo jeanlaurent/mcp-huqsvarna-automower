@@ -20,7 +20,7 @@ You need a `ClientID` and `ClientSecret` generated through the [Husqvarna develo
 
 ## Available Tools
 
-### husqvarna_automowers_status
+### Husqvarna Automowers Status
 
 Get detailed information about all automowers.
 
@@ -59,7 +59,7 @@ Then in Claude Desktop or your favorite MCP Client
 }
 ```
 
-To run with Streamable HTTP transport instead of stdio, add `-e TRANSPORT=http` and `-e PORT=8080` to the `docker run` arguments.
+To run with Streamable HTTP transport instead of stdio, add `-e TRANSPORT=http`, `-e PORT=8080`, and `-p 8080:8080` to the `docker run` arguments.
 
 ## With Docker Compose (Streamable HTTP + MCP Inspector)
 
@@ -72,6 +72,8 @@ HUSQVARNA_CLIENT_ID=YourClientID
 HUSQVARNA_CLIENT_SECRET=YourClientSecret
 ```
 
+> ⚠️ **Do not commit `.env`** — it contains secrets. It is already listed in `.gitignore`.
+
 2. Start both services:
 
 ```bash
@@ -82,7 +84,7 @@ docker compose up
 
 4. In the Inspector UI:
    - Select **Streamable HTTP** as the transport
-   - Enter the server URL: `http://automower:8080/mcp`
+   - Enter the server URL: `http://localhost:8080/mcp`
    - Click **Connect**
 
 5. Use the **Husqvarna Automowers Status** tool to query your mowers.

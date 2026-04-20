@@ -10,7 +10,9 @@ services:
       - "8080:8080"
 
   inspector:
-    image: ghcr.io/modelcontextprotocol/inspector:latest
+    image: ghcr.io/modelcontextprotocol/inspector:0.21.2-hotfix-3
+    depends_on:
+      - automower
     environment:
       - HOST=0.0.0.0
       - MCP_AUTO_OPEN_ENABLED=false
