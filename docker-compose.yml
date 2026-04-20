@@ -11,7 +11,7 @@ services:
 
   inspector:
     image: ghcr.io/modelcontextprotocol/inspector:0.21.2-hotfix-3
-    entrypoint: ["npx", "@modelcontextprotocol/inspector", "--transport", "streamable-http", "--server-url", "http://automower:8080/mcp"]
+    command: ["--", "--transport", "streamable-http", "--server-url", "http://automower:8080/mcp"]
     depends_on:
       - automower
     environment:
