@@ -72,6 +72,17 @@ Then add it to your Claude Desktop (or any MCP client) configuration:
 }
 ```
 
+### With Claude Code
+
+Register the server with the `claude` CLI so it's available in all Claude Code sessions:
+
+```bash
+claude mcp add husqvarna-automower -- docker run -i --rm \
+  -e HUSQVARNA_CLIENT_ID=YourClientID \
+  -e HUSQVARNA_CLIENT_SECRET=YourClientSecret \
+  husqvarna-automower-mcp
+```
+
 ### Running in Streamable HTTP mode
 
 To expose the server as a persistent HTTP endpoint (useful for multi-agent stacks, Home Assistant, or any client that connects over HTTP rather than spawning a subprocess):
