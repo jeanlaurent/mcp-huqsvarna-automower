@@ -72,6 +72,22 @@ Then add it to your Claude Desktop (or any MCP client) configuration:
 }
 ```
 
+### Running in Streamable HTTP mode
+
+To expose the server as a persistent HTTP endpoint (useful for multi-agent stacks, Home Assistant, or any client that connects over HTTP rather than spawning a subprocess):
+
+```bash
+docker run --rm \
+  -e TRANSPORT=http \
+  -e PORT=8080 \
+  -e HUSQVARNA_CLIENT_ID=YourClientID \
+  -e HUSQVARNA_CLIENT_SECRET=YourClientSecret \
+  -p 8080:8080 \
+  husqvarna-automower-mcp
+```
+
+The server will be available at `http://localhost:8080/mcp`.
+
 ## With Docker Compose (Streamable HTTP + MCP Inspector)
 
 Streamable HTTP mode exposes the server as a persistent HTTP endpoint rather than a subprocess. This is suitable for multi-agent stacks, Home Assistant integrations, and any MCP client that can't launch a subprocess directly.
