@@ -17,6 +17,8 @@ services:
     environment:
       - HOST=0.0.0.0
       - MCP_AUTO_OPEN_ENABLED=false
+      - DANGEROUSLY_OMIT_AUTH=true
+      - ALLOWED_ORIGINS=http://localhost:6274
     ports:
       - "6274:6274"
       - "6277:6277"

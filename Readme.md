@@ -82,6 +82,8 @@ docker compose up
 
 3. Open the Inspector UI at [http://localhost:6274](http://localhost:6274) — it is pre-filled to connect to the automower service.
 
+   > **Note:** `DANGEROUSLY_OMIT_AUTH=true` and `ALLOWED_ORIGINS` are required for the MCP Inspector to work correctly when run inside Docker. `HOST=0.0.0.0` binds to all interfaces (needed for Docker port mapping), but causes the Inspector's proxy token URL to use `0.0.0.0` instead of `localhost`. Disabling auth avoids this mismatch. Always open the Inspector at `http://localhost:6274`, never `http://0.0.0.0:6274`.
+
 4. Click **Connect** to start the session.
 
 5. Use the **Husqvarna Automowers Status** tool to query your mowers.
